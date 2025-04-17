@@ -1,39 +1,188 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BucettiGANG</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <title>7th Grade Community Survey</title>
+  <style>
+    body {
+      background-color: #f4f7f8;
+      font-family: Arial, sans-serif;
+      color: #333;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1, h2 {
+      color: #2a71d0;
+      text-align: center;
+    }
+
+    .survey-container {
+      max-width: 700px;
+      margin: auto;
+      background-color: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    }
+
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 20px;
+    }
+
+    textarea, input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+
+    .checkboxes {
+      margin-top: 10px;
+    }
+
+    .checkboxes label {
+      font-weight: normal;
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    button {
+      margin-top: 25px;
+      padding: 10px 20px;
+      background-color: #2a71d0;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    .thanks {
+      text-align: center;
+      margin-top: 20px;
+      font-weight: bold;
+      color: green;
+    }
+
+    #responseCount {
+      text-align: center;
+      margin-top: 10px;
+      font-size: 16px;
+      color: #444;
+    }
+
+    .responses {
+      margin-top: 30px;
+      background-color: #eaf0fa;
+      padding: 20px;
+      border-radius: 10px;
+    }
+
+    .response-item {
+      background-color: white;
+      margin-bottom: 15px;
+      padding: 15px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+    }
+
+    .response-item p {
+      margin: 5px 0;
+    }
+  </style>
 </head>
 <body>
-    <header>
-        <h1>Welcome to BucettiGANG</h1>
-        <button id="theme-toggle">Toggle Theme</button>
-    </header>
+  <div class="survey-container">
+    <h1>7th Grade Community Survey</h1>
+    <form id="surveyForm">
+      <label for="name">What is your name?</label>
+      <input type="text" id="name" name="name" required>
 
-    <main>
-        <section id="about">
-            <h2>About Us</h2>
-            <p>Welcome to BucettiGANG, the ultimate Discord server for meme enthusiasts!</p>
-        </section>
+      <label for="injustice">1. What is one injustice or unfair situation you notice in your school or community?</label>
+      <textarea id="injustice" name="injustice" rows="3" required></textarea>
 
-        <section id="shop">
-            <h2>Shop</h2>
-            <p>Use your Meme currency to purchase awesome memes!</p>
-            <div class="shop-item">
-                <h3>Meme 1</h3>
-                <button>Buy for 10 Meme currency</button>
-            </div>
-            <div class="shop-item">
-                <h3>Meme 2</h3>
-                <button>Buy for 15 Meme currency</button>
-            </div>
-        </section>
-    </main>
+      <label>2. What do you think 7th graders *need* more of at school or in your community?</label>
+      <div class="checkboxes">
+        <label><input type="checkbox" name="needs" value="Mental health support"> Better access to mental health support</label>
+        <label><input type="checkbox" name="needs" value="Cleaner bathrooms"> Cleaner bathrooms</label>
+        <label><input type="checkbox" name="needs" value="Tutoring"> More academic help/tutoring</label>
+        <label><input type="checkbox" name="needs" value="Creative activities"> More fun/creative activities</label>
+        <label><input type="text" name="needsOther" placeholder="Other (please specify)"> </label>
+      </div>
 
-    <script src="script.js"></script>
-    <link rel="stylesheet" href="style.css">
-    <script src="script.js"></script>
+      <label for="change">3. What would you *want* to improve most if you had the power to change one thing?</label>
+      <textarea id="change" name="change" rows="3" required></textarea>
+
+      <button type="submit">Submit Survey</button>
+    </form>
+
+    <div class="thanks" id="thanksMessage" style="display:none;">Thank you for submitting your survey!</div>
+    <div id="responseCount"></div>
+
+    <div class="responses" id="allResponses">
+      <h2>All Submitted Responses</h2>
+      <div id="responsesList"></div>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById("surveyForm");
+    const thanks = document.getElementById("thanksMessage");
+    const responseCount = document.getElementById("responseCount");
+    const responsesList = document.getElementById("responsesList");
+
+    function loadResponses() {
+      const responses = JSON.parse(localStorage.getItem("surveyResponses")) || [];
+      responsesList.innerHTML = "";
+      responseCount.textContent = `Total Responses: ${responses.length}`;
+      responses.forEach((r, i) => {
+        const div = document.createElement("div");
+        div.className = "response-item";
+        div.innerHTML = `
+          <p><strong>Name:</strong> ${r.name}</p>
+          <p><strong>Injustice:</strong> ${r.injustice}</p>
+          <p><strong>Needs:</strong> ${r.needs.join(", ")}</p>
+          <p><strong>Wants to change:</strong> ${r.change}</p>
+        `;
+        responsesList.appendChild(div);
+      });
+    }
+
+    form.addEventListener("submit", function(event) {
+      event.preventDefault();
+
+      const name = form.name.value;
+      const injustice = form.injustice.value;
+      const change = form.change.value;
+
+      const checkboxes = document.querySelectorAll('input[name="needs"]:checked');
+      const needs = Array.from(checkboxes).map(cb => cb.value);
+      const needsOther = form.elements["needsOther"].value;
+      if (needsOther) needs.push("Other: " + needsOther);
+
+      const newResponse = {
+        name,
+        injustice,
+        needs,
+        change
+      };
+
+      const responses = JSON.parse(localStorage.getItem("surveyResponses")) || [];
+      responses.push(newResponse);
+      localStorage.setItem("surveyResponses", JSON.stringify(responses));
+
+      thanks.style.display = "block";
+      form.reset();
+      loadResponses();
+    });
+
+    // Load on page load
+    loadResponses();
+  </script>
 </body>
 </html>
