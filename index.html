@@ -5,90 +5,77 @@
   <title>7th Grade Community Survey</title>
   <style>
     body {
-      background-color: #f4f7f8;
       font-family: Arial, sans-serif;
-      color: #333;
-      margin: 0;
+      background-color: #f4f7f8;
       padding: 20px;
+      color: #333;
     }
 
     h1, h2 {
-      color: #2a71d0;
       text-align: center;
+      color: #2a71d0;
     }
 
     .survey-container {
       max-width: 700px;
       margin: auto;
-      background-color: white;
-      padding: 30px;
+      background-color: #fff;
+      padding: 25px;
       border-radius: 10px;
       box-shadow: 0 0 20px rgba(0,0,0,0.1);
     }
 
     label {
-      font-weight: bold;
       display: block;
       margin-top: 20px;
+      font-weight: bold;
     }
 
     textarea, input[type="text"] {
       width: 100%;
       padding: 10px;
       margin-top: 5px;
-      border-radius: 5px;
       border: 1px solid #ccc;
+      border-radius: 5px;
       box-sizing: border-box;
-    }
-
-    .checkboxes {
-      margin-top: 10px;
     }
 
     .checkboxes label {
       font-weight: normal;
-      display: block;
       margin-bottom: 5px;
     }
 
     button {
       margin-top: 25px;
-      padding: 10px 20px;
+      width: 100%;
+      padding: 10px;
       background-color: #2a71d0;
       color: white;
       border: none;
       border-radius: 5px;
       cursor: pointer;
-      width: 100%;
     }
 
-    .thanks {
+    .thanks, #responseCount {
       text-align: center;
       margin-top: 20px;
-      font-weight: bold;
       color: green;
-    }
-
-    #responseCount {
-      text-align: center;
-      margin-top: 10px;
-      font-size: 16px;
-      color: #444;
+      font-weight: bold;
     }
 
     .responses {
       margin-top: 30px;
-      background-color: #eaf0fa;
+      background-color: #eef4fc;
       padding: 20px;
       border-radius: 10px;
     }
 
     .response-item {
-      background-color: white;
+      background-color: #fff;
       margin-bottom: 15px;
       padding: 15px;
-      border-radius: 10px;
       border: 1px solid #ccc;
+      border-radius: 10px;
     }
 
     .response-item p {
@@ -101,88 +88,85 @@
     <h1>7th Grade Community Survey</h1>
     <form id="surveyForm">
       <label for="name">What is your name?</label>
-      <input type="text" id="name" name="name" required>
+      <input type="text" id="name" required>
 
       <label for="injustice">1. What is one injustice or unfair situation you notice in your school or community?</label>
-      <textarea id="injustice" name="injustice" rows="3" required></textarea>
+      <textarea id="injustice" rows="3" required></textarea>
 
-      <label>2. What do you think 7th graders *need* more of at school or in your community?</label>
+      <label>2. What do you think 7th graders *need* more of?</label>
       <div class="checkboxes">
-        <label><input type="checkbox" name="needs" value="Mental health support"> Better access to mental health support</label>
-        <label><input type="checkbox" name="needs" value="Cleaner bathrooms"> Cleaner bathrooms</label>
-        <label><input type="checkbox" name="needs" value="Tutoring"> More academic help/tutoring</label>
-        <label><input type="checkbox" name="needs" value="Creative activities"> More fun/creative activities</label>
-        <label><input type="text" name="needsOther" placeholder="Other (please specify)"> </label>
+        <label><input type="checkbox" value="Mental health support"> Mental health support</label>
+        <label><input type="checkbox" value="Cleaner bathrooms"> Cleaner bathrooms</label>
+        <label><input type="checkbox" value="Tutoring"> Tutoring/Academic Help</label>
+        <label><input type="checkbox" value="Creative activities"> More Fun Activities</label>
+        <label><input type="text" id="needsOther" placeholder="Other (optional)"> </label>
       </div>
 
-      <label for="change">3. What would you *want* to improve most if you had the power to change one thing?</label>
-      <textarea id="change" name="change" rows="3" required></textarea>
+      <label for="change">3. If you could change one thing, what would it be?</label>
+      <textarea id="change" rows="3" required></textarea>
 
-      <button type="submit">Submit Survey</button>
+      <button type="submit">Submit</button>
     </form>
 
-    <div class="thanks" id="thanksMessage" style="display:none;">Thank you for submitting your survey!</div>
+    <div id="thanksMessage" class="thanks" style="display: none;">Thanks for submitting your survey!</div>
     <div id="responseCount"></div>
 
-    <div class="responses" id="allResponses">
-      <h2>All Submitted Responses</h2>
+    <div class="responses">
+      <h2>Submitted Responses</h2>
       <div id="responsesList"></div>
     </div>
   </div>
 
   <script>
     const form = document.getElementById("surveyForm");
-    const thanks = document.getElementById("thanksMessage");
-    const responseCount = document.getElementById("responseCount");
     const responsesList = document.getElementById("responsesList");
+    const responseCount = document.getElementById("responseCount");
+    const thanksMessage = document.getElementById("thanksMessage");
 
     function loadResponses() {
-      const responses = JSON.parse(localStorage.getItem("surveyResponses")) || [];
+      const data = JSON.parse(localStorage.getItem("surveyResponses")) || [];
       responsesList.innerHTML = "";
-      responseCount.textContent = `Total Responses: ${responses.length}`;
-      responses.forEach((r, i) => {
+      responseCount.textContent = `Total Responses: ${data.length}`;
+      data.forEach((res, i) => {
         const div = document.createElement("div");
         div.className = "response-item";
         div.innerHTML = `
-          <p><strong>Name:</strong> ${r.name}</p>
-          <p><strong>Injustice:</strong> ${r.injustice}</p>
-          <p><strong>Needs:</strong> ${r.needs.join(", ")}</p>
-          <p><strong>Wants to change:</strong> ${r.change}</p>
+          <p><strong>Name:</strong> ${res.name}</p>
+          <p><strong>Injustice:</strong> ${res.injustice}</p>
+          <p><strong>Needs:</strong> ${res.needs.join(", ")}</p>
+          <p><strong>Change:</strong> ${res.change}</p>
         `;
         responsesList.appendChild(div);
       });
     }
 
-    form.addEventListener("submit", function(event) {
-      event.preventDefault();
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
 
-      const name = form.name.value;
-      const injustice = form.injustice.value;
-      const change = form.change.value;
+      const name = document.getElementById("name").value.trim();
+      const injustice = document.getElementById("injustice").value.trim();
+      const change = document.getElementById("change").value.trim();
 
-      const checkboxes = document.querySelectorAll('input[name="needs"]:checked');
-      const needs = Array.from(checkboxes).map(cb => cb.value);
-      const needsOther = form.elements["needsOther"].value;
+      const needs = [];
+      document.querySelectorAll('.checkboxes input[type="checkbox"]:checked').forEach(cb => needs.push(cb.value));
+      const needsOther = document.getElementById("needsOther").value.trim();
       if (needsOther) needs.push("Other: " + needsOther);
 
-      const newResponse = {
-        name,
-        injustice,
-        needs,
-        change
-      };
+      if (!name || !injustice || !change) return;
 
-      const responses = JSON.parse(localStorage.getItem("surveyResponses")) || [];
+      const newResponse = { name, injustice, needs, change };
+
+      let responses = JSON.parse(localStorage.getItem("surveyResponses")) || [];
       responses.push(newResponse);
       localStorage.setItem("surveyResponses", JSON.stringify(responses));
 
-      thanks.style.display = "block";
       form.reset();
+      thanksMessage.style.display = "block";
+      setTimeout(() => thanksMessage.style.display = "none", 3000);
       loadResponses();
     });
 
-    // Load on page load
-    loadResponses();
+    window.onload = loadResponses;
   </script>
 </body>
 </html>
